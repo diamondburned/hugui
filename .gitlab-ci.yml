@@ -1,0 +1,33 @@
+image: golang:alpine
+
+variables:
+  GO111MODULE: "on"
+  CGO_ENABLED: 0
+
+before_script:
+  - apk add git upx
+
+stages:
+    - build
+
+linux:
+    stage: build
+    script:
+      - time go get
+      - time go build -ldflags -w -ldflags -s -o $CI_PROJECT_DIR/hugui
+      - upx -q --8086 -9 $CI_PROJECT_DIR/hugui
+    artifacts:
+      paths:
+        - hugui
+
+windows:
+  stage: build
+  script:
+    - export GOOS=windows
+    - time go get 
+    - time go build -o $CI_PROJECT_DIR/hugui.exe
+    - upx $CI_PROJECT_DIR/hugui.exe
+  artifacts:
+    paths:
+      - hugui.exe
+
