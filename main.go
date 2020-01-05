@@ -20,10 +20,6 @@ func main() {
 	app := &cli.App{
 		Name:   "hugui",
 		Action: Main,
-		Commands: []*cli.Command{{
-			Name:   "clone",
-			Action: Clone,
-		}},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "path",
@@ -39,18 +35,14 @@ func main() {
 		}
 
 		fatal(err)
-		log.Fatalln(err)
 	}
-}
-
-func Clone(c *cli.Context) error {
-	return clone(c.String("path"))
 }
 
 func Main(c *cli.Context) error {
 	var path = c.String("path")
 
 	choice, ok, err := dlgs.List(DialogTitle, "Choose action", []string{
+		"Git: Clone (initialize)",
 		"Git: Update/Pull",
 		"Git: Push",
 		"Hugo: Build the website to public/",
@@ -64,6 +56,10 @@ func Main(c *cli.Context) error {
 	}
 
 	if strings.HasPrefix(choice, "Git: ") {
+		if choice == "Git: Clone (initialize)" {
+			return clone(path)
+		}
+
 		r, err := git.PlainOpen(path)
 		if err != nil {
 			return errors.Wrap(err, "Failed to open "+path)
@@ -84,6 +80,7 @@ func Main(c *cli.Context) error {
 		}
 	}
 
+	// cd into the path, so hugo works properly
 	if err := os.Chdir(path); err != nil {
 		return errors.Wrap(err, "Failed to chdir")
 	}
@@ -112,5 +109,5 @@ func must(err error) {
 func fatal(v ...interface{}) {
 	s := fmt.Sprintln(v...)
 	dlgs.Error(DialogTitle+": Error", s)
-	log.Fatalln(s)
+	log.Panicln(s)
 }

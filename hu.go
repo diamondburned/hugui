@@ -14,7 +14,7 @@ import (
 )
 
 func build() error {
-	resp := commands.Execute([]string{"hugo"})
+	resp := commands.Execute([]string{})
 	return resp.Err
 }
 
@@ -80,10 +80,24 @@ func newPage(path string) error {
 	c = strings.TrimSuffix(c, ".md")
 	c = slugify(c)
 
-	resp := commands.Execute([]string{"new", filepath.Join(prefix, c+".md")})
+	dest := filepath.Join(prefix, c+".md")
+
+	resp := commands.Execute([]string{"new", dest})
 	if resp.Err != nil {
 		return errors.Wrap(err, "Hugo error")
 	}
+
+	dest, err = filepath.Abs(filepath.Join(prefix, c+".md"))
+	if err != nil {
+		return errors.Wrap(err,
+			"Failed to get absolute path for file "+c+".md")
+	}
+
+	// Open the editor, but we don't care if it worked or not.
+	open.Run(dest)
+	// Open the dialog too, but who cares at this point?
+	_, err = dlgs.Info(DialogTitle, "Created "+dest)
+	must(err)
 
 	return nil
 }
