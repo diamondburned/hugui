@@ -8,6 +8,7 @@ import (
 
 	"github.com/gen2brain/dlgs"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 	cli "github.com/urfave/cli/v2"
 	"gopkg.in/src-d/go-git.v4"
 )
@@ -84,6 +85,9 @@ func Main(c *cli.Context) error {
 	if err := os.Chdir(path); err != nil {
 		return errors.Wrap(err, "Failed to chdir")
 	}
+
+	// We're fine with Hugo being ran in cmd.exe
+	cobra.MousetrapHelpText = ""
 
 	switch choice {
 	case "Hugo: Build the website to public/":

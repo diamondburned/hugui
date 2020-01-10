@@ -12,6 +12,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e
+	github.com/spf13/cobra v0.0.4-0.20190321000552-67fc4837d267
 	github.com/src-d/go-git v4.7.0+incompatible
 	github.com/urfave/cli/v2 v2.1.1
 	golang.org/x/crypto v0.0.0-20191227163750-53104e6ec876 // indirect
