@@ -48,6 +48,12 @@ func push(r *git.Repository, w *git.Worktree, path string) error {
 		return err
 	}
 
+	// This adds the whole worktree, so ./ denotes the current work tree.
+	_, err = w.Add("./")
+	if err != nil {
+		return errors.Wrap(err, "Failed to add current directory")
+	}
+
 	_, err = w.Commit(m, &git.CommitOptions{
 		All: true,
 		Author: &object.Signature{
